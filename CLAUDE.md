@@ -98,7 +98,7 @@ Enforced from outside, not just by the prompt: the grader and test set live outs
 
 - [EXPERIMENT_LOG.md](EXPERIMENT_LOG.md) is the public record (the user is treating this like a research paper). Append a dated entry for every measurement, run, design change and decision, with the exact command and results. Never rewrite old entries; correct them in a new one.
 - Don't start any measurement or agent run until the user says so.
-- The GitHub repo is public. Don't push `grader/`, the data, or the log while agent experiments are running: the agent can browse the web, and `make_data.py` plus seed 0 recreates the test set.
+- The GitHub repo was made **private** on 2026-11-13 so the grader and test set can be pushed safely. Keep it private while agent experiments are running: the agent can browse the web, and `make_data.py` plus seed 0 recreates the test set. Ask the user before making it public again.
 
 ## Gotchas
 

@@ -50,7 +50,7 @@ For every run, these are recorded:
 - The grader and test set are fixed before the first agent run and not changed afterward. Any change is logged here, and every earlier result is re-measured.
 - The agent sees only its task description, its two data files, the model, and a submit script that returns a score.
 - Nothing about this experiment's hypothesis is shown to the agent.
-- **Public repo caution:** this GitHub repository is public. The grader, generator and test set must not be pushed while agent experiments are running. The generator plus its seed recreates the test set, and the agent can browse the web.
+- **Repo visibility:** the GitHub repository is kept private while agent experiments run, because the agent can browse the web and the generator plus its seed recreates the test set. It will be made public once the experiments are finished (see Entry 3).
 
 ---
 
@@ -108,3 +108,7 @@ Built the data, grader, grading server and agent-folder script described above. 
 It will be added after the first rudimentary agent experiment, to compare against the single accuracy number. The split depends only on the fixed test puzzles, so it can be computed afterward from the saved outputs without re-running anything.
 
 **Still open:** the pass threshold (placeholder 50%).
+
+### Entry 3: Repository made private (2026-11-13, before any agent run)
+
+The GitHub repository was switched from public to private before anything other than the README was pushed, so the grader, test set and generator were never publicly visible. It stays private until the agent experiments are finished. The agent's web access is not otherwise restricted; a block on Claude Code's web tools was considered and not adopted for now.
