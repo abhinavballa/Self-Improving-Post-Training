@@ -1,0 +1,19 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Models, data and training outputs
+models/
+checkpoints/
+runs/*/checkpoints/
+data/raw/
+*.safetensors
+*.bin
+*.pt
+wandb/
+workspace/checkpoints/
+grader/results/
