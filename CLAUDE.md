@@ -2,7 +2,7 @@
 
 ## What this project is
 
-A project to reproduce, measure, and fix **strategy lock-in** in agents that post-train LLMs, a bottleneck for recursive self-improvement (RSI). It builds on arXiv:2608.19072 (https://arxiv.org/abs/2608.19072). Only the abstract has been read so far; paper details below come from it, not from the full paper.
+A project to reproduce, measure, and fix **strategy lock-in** in agents that post-train LLMs, a bottleneck for recursive self-improvement (RSI). It builds on arXiv:2608.19072 (https://arxiv.org/abs/2608.19072), "What is Missing from AI Post-Training AI: An Empirical Analysis" (Lim, Huang, Peng et al., v2, 28 Sep 2026). The full text was read on 2026-11-13; see "Paper context" below.
 
 The problem: when an agent's high-level training strategy is failing, it keeps tweaking hyperparameters inside that approach instead of recognizing the failure and switching to a better one.
 
@@ -61,23 +61,29 @@ Training runs on the Mac GPU (`mps`), which Docker on macOS can't reach, so the 
 - Trade-offs: much easier to defend the isolation claim in a paper; more to build; the agent's workflow changes ("submit a GPU job" instead of running Python directly), which must be reported as a setup variable and kept identical across conditions.
 - Docker Model Runner doesn't solve this: it only serves models for inference, while here the GPU job is training code the agent writes.
 
-## Paper context (from the abstract)
+## Paper context
 
-The paper separates two capabilities:
+Read from the arXiv HTML. Items marked *(less certain)* came from an automated summary of the paper's second half, not checked against the text.
 
-- **Execution-level**: iterating within an established training strategy (tuning hyperparameters, fixing bugs, cleaning data within the same approach).
-- **Strategy-level**: revising the strategy itself (e.g. switching from SFT to RL) as evidence accumulates.
+**Roles, same as ours:** frontier coding agents choose the strategy and write the training code; the small models are only trained. Agents: Claude Code (Opus 4.6, also GLM-5.2), Codex CLI (GPT-5.2), OpenCode.
 
-Findings across 1,338 post-training trajectories from frontier agents:
+**Setup:**
+- Corpus: 1,338 PostTrainBench trajectories (Claude Code 575, Codex CLI 369, OpenCode 394), each with 10 hours on one H100. 900 launched training, giving 5,111 experiments. Target models *(less certain)*: Qwen3-4B-Base, Gemma-3-4B-PT, SmolLM3-3B-Base. Benchmarks included GSM8K, HumanEval, AIME 2025 and others.
+- Controlled experiments: Qwen3-1.7B-Base on GSM8K, HumanEval, AIME 2025, with 4×A800 GPUs, 10 hours, 3 runs per configuration. Interventions used Claude Code + Opus 4.6.
+- **Strategy definition:** a strategy is the triple (training algorithm, data source, training stages). Changing any element is a strategy change; anything else is execution. Labeled with rule-based scripts plus an LLM, then reviewed by the authors. Use the same definition for our judge.
 
-- Agents execute post-training reliably but **lock into a default strategy** that depends on the agent, not the task. Only **2.1%** of transitions between adjacent runs change strategy.
-- **Experience** improves execution, not strategy.
-- **More reasoning compute** gives front-loaded gains on easier tasks but refines the committed strategy instead of revising it.
-- **Human review before training** changes *which* strategy the agent locks into, not *whether* it locks in.
-- **A single mid-run instruction** beats the agent's own continuation by up to **17.44 points** under the same budget. (The abstract doesn't say what that instruction contained.)
-- Conclusion: the missing piece is the *decision* to reopen a committed strategy. RSI would need interaction protocols and training signals that make strategy revision an explicit, rewarded decision.
+**Findings:**
+- Only **74 of 3,557** adjacent run pairs (**2.1%**) changed strategy.
+- Defaults depend on the agent: Claude Code started with full SFT **71.9%** of the time, Codex CLI with PEFT **89.5%**.
+- Experience (journal, skill library, evaluator agent) helped execution: the agent adopted 22/22 execution-level suggestions and **0/21** strategy-level ones.
+- More reasoning compute barely helped (AIME: ~14M extra tokens for one extra problem).
+- Human review before training changes *which* strategy locks in, not *whether*.
+- **A single mid-run instruction to switch** won by up to **17.44 points** on GSM8K (65.20% vs 47.76%, switching from SFT to GRPO after the first SFT run), and +10.8 on HumanEval. The exact wording isn't given.
+- **A "reconsider" instruction that names no alternative failed**: the agent reaffirmed its strategy every time. **For Goal 3, the trigger must name a concrete alternative strategy.**
+- Proposed directions: report strategy metrics (switch rate, suggestion adoption) next to scores; make "continue or switch" an explicit decision after each evaluation; use paired continue/switch branches as a training signal.
+- Limitations they list: 3 runs per configuration, one base model, three benchmarks, a 10-hour budget, and author-chosen fork points.
 
-Countdown, Qwen2.5-0.5B, and SFT-vs-GRPO as the example strategies are this project's choices. Don't attribute them to the paper unless the full paper confirms them.
+**This project's choices, not the paper's:** Countdown, Qwen2.5-0.5B-Instruct, the deliberate SFT trap, a 5-run budget, and a Mac GPU. The paper didn't use Countdown or Qwen2.5.
 
 ## Rules for the agent under test
 

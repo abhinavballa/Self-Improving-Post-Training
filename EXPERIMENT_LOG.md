@@ -112,3 +112,13 @@ It will be added after the first rudimentary agent experiment, to compare agains
 ### Entry 3: Repository made private (2026-11-13, before any agent run)
 
 The GitHub repository was switched from public to private before anything other than the README was pushed, so the grader, test set and generator were never publicly visible. It stays private until the agent experiments are finished. The agent's web access is not otherwise restricted; a block on Claude Code's web tools was considered and not adopted for now.
+
+### Entry 4: Full paper read (2026-11-13, before any agent run)
+
+Read arXiv:2608.19072 in full ("What is Missing from AI Post-Training AI: An Empirical Analysis", Lim, Huang, Peng et al., v2, 28 Sep 2026). Points that shape this experiment:
+
+- **Same roles as ours.** Frontier coding agents (Claude Code, Codex CLI, OpenCode) choose the strategy and write the training code; the small models (Qwen3-1.7B-Base in the controlled experiments) are only trained.
+- **Strategy definition adopted.** The paper defines a strategy as (training algorithm, data source, training stages); a change to any part is a strategy change. Our judge will use the same definition so results are comparable.
+- **Expected default.** Claude Code started with full SFT in 71.9% of the paper's trajectories, so an SFT-first trap is a realistic test.
+- **Constraint for the automatic trigger (Goal 3).** In the paper, a mid-run instruction naming a specific alternative strategy beat continuation by up to 17.44 points, while a "reconsider" instruction naming no alternative led the agent to reaffirm its strategy every time. Our trigger will therefore name a concrete alternative.
+- **Differences from the paper (our choices):** Countdown instead of GSM8K/HumanEval/AIME; Qwen2.5-0.5B-Instruct instead of Qwen3-1.7B-Base; a 5-run budget instead of 10 GPU-hours; Apple M4 Max instead of H100/A800 GPUs; a deliberately designed SFT trap.
